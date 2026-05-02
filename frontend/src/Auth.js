@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-const API = "http://localhost:5000/api";
+const API = "https://your-backend.up.railway.app/api";
 
 export default function Auth({ setToken }) {
   const [isLogin, setIsLogin] = useState(true);
