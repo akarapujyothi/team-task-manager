@@ -3,7 +3,6 @@ const router = express.Router()
 
 const Project = require('../models/Project')
 
-// TEMP: auth remove చేసి test చేద్దాం
 router.post('/', async (req, res) => {
   try {
     const project = new Project(req.body)

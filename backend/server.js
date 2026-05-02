@@ -1,36 +1,43 @@
-require('dotenv').config()
-const express = require('express')
-const mongoose = require('mongoose')
-const cors = require('cors')
+require("dotenv").config();
 
-const app = express()
+const express = require("express");
+const mongoose = require("mongoose");
+const cors = require("cors");
 
-app.use(cors())
-app.use(express.json())
+const app = express();
 
-const authRoutes = require('./routes/authRoutes')
+/* ---------------- CORS (FIXED) ---------------- */
+// Temporary open for debugging (later restrict in production)
+app.use(cors({
+  origin: "*",
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  allowedHeaders: ["Content-Type", "Authorization"]
+}));
 
-app.use('/api/auth', authRoutes)
+/* ---------------- MIDDLEWARE ---------------- */
+app.use(express.json());
 
-const projectRoutes = require('./routes/projectRoutes')
-app.use('/api/projects', projectRoutes)
+/* ---------------- TEST ROUTE ---------------- */
+app.get("/", (req, res) => {
+  res.send("API is running...");
+});
 
-const userRoutes = require('./routes/userRoutes')
+/* ---------------- ROUTES ---------------- */
+app.use("/api/auth", require("./routes/authRoutes"));
+app.use("/api/users", require("./routes/userRoutes"));
+app.use("/api/projects", require("./routes/projectRoutes"));
+app.use("/api/tasks", require("./routes/taskRoutes"));
+app.use("/api/dashboard", require("./routes/dashboardRoutes"));
 
-app.use('/api/users', userRoutes)
-
-const dashboardRoutes = require('./routes/dashboardRoutes')
-app.use('/api/dashboard', dashboardRoutes)
-
-// ✅ ADD THIS
-const taskRoutes = require('./routes/taskRoutes')
-app.use('/api/tasks', taskRoutes)
-
-// MongoDB connect
+/* ---------------- DATABASE ---------------- */
 mongoose.connect(process.env.MONGO_URI)
-.then(() => console.log("MongoDB Connected"))
-.catch(err => console.log(err))
+  .then(() => console.log("MongoDB Connected"))
+  .catch(err => console.log("DB Error:", err));
 
-app.listen(process.env.PORT, () => {
-  console.log(`Server running on ${process.env.PORT}`)
-})
+/* ---------------- SERVER ---------------- */
+const PORT = process.env.PORT || 5000;
+
+// Important fix: allow external access
+app.listen(PORT, "0.0.0.0", () => {
+  console.log(`Server running on port ${PORT}`);
+});

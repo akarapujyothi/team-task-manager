@@ -2,7 +2,6 @@ const express = require('express')
 const router = express.Router()
 const Task = require('../models/Task')
 
-// CREATE task with project + user
 router.post('/', async (req, res) => {
   try {
     const task = new Task(req.body)
