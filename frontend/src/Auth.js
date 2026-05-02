@@ -1,9 +1,10 @@
 import { useState } from "react";
 
-const API = "https://your-backend.up.railway.app/api";
+const API = "https://YOUR-ACTUAL-BACKEND-URL/api";
 
 export default function Auth({ setToken }) {
   const [isLogin, setIsLogin] = useState(true);
+
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -25,27 +26,32 @@ export default function Auth({ setToken }) {
       const data = await res.json();
 
       if (!res.ok) {
-        alert(data.message);
+        alert(data.message || "Something went wrong");
         return;
       }
+
 
       if (isLogin) {
         localStorage.setItem("token", data.token);
         setToken(data.token);
-      } else {
-        alert("Signup successful! Now login.");
+      } 
+ 
+      else {
+        alert("Signup successful! Please login.");
         setIsLogin(true);
+        setForm({ name: "", email: "", password: "" });
       }
 
-    } catch (err) {
-      console.error(err);
-      alert("Backend not reachable ❌");
+    } catch (error) {
+      console.log(error);
+      alert("Backend not reachable ");
     }
   };
 
   return (
     <div className="flex items-center justify-center h-screen bg-gray-100">
       <div className="bg-white p-6 rounded shadow w-80">
+
         <h2 className="text-xl font-bold mb-4">
           {isLogin ? "Login" : "Signup"}
         </h2>
@@ -54,6 +60,7 @@ export default function Auth({ setToken }) {
           <input
             placeholder="Name"
             className="w-full p-2 border mb-2"
+            value={form.name}
             onChange={(e) =>
               setForm({ ...form, name: e.target.value })
             }
@@ -63,20 +70,24 @@ export default function Auth({ setToken }) {
         <input
           placeholder="Email"
           className="w-full p-2 border mb-2"
+          value={form.email}
           onChange={(e) =>
             setForm({ ...form, email: e.target.value })
           }
         />
 
+
         <input
           type="password"
           placeholder="Password"
           className="w-full p-2 border mb-2"
+          value={form.password}
           onChange={(e) =>
             setForm({ ...form, password: e.target.value })
           }
         />
 
+   
         <button
           onClick={submit}
           className="w-full bg-blue-500 text-white p-2 rounded"
@@ -84,12 +95,15 @@ export default function Auth({ setToken }) {
           {isLogin ? "Login" : "Signup"}
         </button>
 
+
         <p className="text-sm mt-3 text-center">
           <button
             className="text-blue-500"
             onClick={() => setIsLogin(!isLogin)}
           >
-            {isLogin ? "Create account" : "Already have account?"}
+            {isLogin
+              ? "Create account"
+              : "Already have account?"}
           </button>
         </p>
       </div>
